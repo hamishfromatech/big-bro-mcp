@@ -1,57 +1,65 @@
 # Big Bro MCP
 
-An MCP server that allows LLMs to call upon larger, more capable models when they get stuck on complex tasks.
+**Made and maintained by [The A-Tech Corporation PTY LTD](https://a-tech.com.au).**
 
-**Made and maintained by [The A-Tech Corporation PTY LTD](https://theatechcorporation.com).**
+## The Problem
 
-## Features
+You're building something. You hit a wall. The problem is too hard for your current model to solve alone.
 
-- **Three Provider Support**: OpenAI, Anthropic, and OpenRouter
-- **Two Escalation Modes**:
-  - `ask_big_bro`: Ask a specific question to a more capable model
-  - `escalate_task`: Hand off an entire task with full context
-- **Automatic Fallback**: If one provider isn't configured, use another
+Most developers would quit. Or ship a half-baked solution.
+
+But you don't have to.
+
+## The Solution
+
+Big Bro MCP lets your AI call in backup. When stuck, it escalates to a more capable model — someone with deeper reasoning, more context, and better problem-solving.
+
+Think of it like having a senior engineer on speed dial. Except the senior engineer is Claude Opus, GPT-4o, or whatever the best model is right now.
+
+## What You Get
+
+| Feature | Benefit |
+|---------|---------|
+| **3 Providers** | OpenAI, Anthropic, OpenRouter — pick the best tool for the job |
+| **2 Escalation Modes** | Ask a question OR hand off the entire task |
+| **Zero Friction** | Install, configure keys, done |
 
 ## Installation
 
-1. Clone or navigate to this directory
+**Step 1:** Install dependencies
+```bash
+pip install -r requirements.txt
+```
 
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+**Step 2:** Configure API keys
+```bash
+cp .env.example .env
+# Edit .env and add your key(s)
+```
 
-3. Configure API keys (at least one required):
-   ```bash
-   cp .env.example .env
-   # Edit .env and add your API key(s)
-   ```
+You only need ONE provider to work. But having options is better.
 
-## Configuration
+| Provider | Get Key From |
+|----------|--------------|
+| Anthropic | https://console.anthropic.com/settings/keys |
+| OpenAI | https://platform.openai.com/api-keys |
+| OpenRouter | https://openrouter.ai/keys |
 
-Set the following environment variables (in `.env` or your shell):
+## How To Use
 
-| Variable | Provider | Get Key From |
-|----------|----------|--------------|
-| `ANTHROPIC_API_KEY` | Anthropic Claude | https://console.anthropic.com/settings/keys |
-| `OPENAI_API_KEY` | OpenAI GPT | https://platform.openai.com/api-keys |
-| `OPENROUTER_API_KEY` | OpenRouter (multi-provider) | https://openrouter.ai/keys |
-
-## Usage
-
-### Running the Server
+### Run The Server
 
 ```bash
-# Stdio transport (for local MCP clients like Claude Code)
+# For local MCP clients (Claude Code, etc.)
 python big_bro_mcp.py
 
-# HTTP transport (for remote clients)
+# For remote clients
 python big_bro_mcp.py --transport http --host 0.0.0.0 --port 8000
 ```
 
-### Configuring in Claude Code
+### Add To Claude Code
 
-Add to your `~/.claude/settings.json`:
+Edit `~/.claude/settings.json`:
 
 ```json
 {
@@ -69,42 +77,40 @@ Add to your `~/.claude/settings.json`:
 }
 ```
 
-### Available Tools
+## The Tools
 
-#### `ask_big_bro`
+### `ask_big_bro` — When You're Stuck On Something Specific
 
-Ask a more capable AI model for help when stuck on a complex task.
-
-**Parameters:**
-- `question` (string): The question or problem you need help with
-- `provider` (string): Provider to use - "openai", "anthropic", or "openrouter" (default: "anthropic")
-- `model` (string, optional): Specific model to use (uses provider default if not specified)
-- `system_prompt` (string, optional): Custom system prompt for context
+Use this when you hit a problem that needs deeper reasoning.
 
 **Example:**
-```
-I'm stuck on this regex pattern. Can you help me understand why it's not matching?
-[provides context]
-```
-
-#### `escalate_task`
-
-Escalate a complete task to a more capable AI model.
+> "I've been debugging this regex for 20 minutes. It's not matching the email format correctly. Here's what I've tried..."
 
 **Parameters:**
-- `task_description` (string): Clear description of what needs to be accomplished
-- `context` (string): All relevant context including what you've tried, current state, code, errors
-- `provider` (string): Provider to use (default: "anthropic")
+- `question` — The problem. Be specific. Include what you've already tried.
+- `provider` — Which model to use (default: anthropic)
+- `model` — Specific model (optional — uses best default)
+- `system_prompt` — Custom context (optional)
+
+---
+
+### `escalate_task` — When You Need To Hand Off The Whole Thing
+
+Use this when the problem is too big for a simple question.
 
 **Example:**
-```
-Task: Implement a custom authentication middleware
-Context: I've tried X, Y, Z but keep getting this error... [full details]
-```
+> "Task: Build a custom auth middleware from scratch. Context: I've tried Express middleware, Passport, and Auth0. Here's the error I'm getting..."
 
-#### `get_available_providers`
+**Parameters:**
+- `task_description` — What needs to be done
+- `context` — Everything you've tried, current state, errors, constraints
+- `provider` — Which model to use (default: anthropic)
 
-Get information about configured providers and their default models.
+---
+
+### `get_available_providers` — Check Your Setup
+
+Returns which providers are configured and their default models.
 
 ## Default Models
 
@@ -114,13 +120,25 @@ Get information about configured providers and their default models.
 | OpenAI | gpt-4o |
 | OpenRouter | anthropic/claude-sonnet-4-6-20250929 |
 
-## When to Use
+## When To Use Big Bro
 
-Use Big Bro when you encounter:
-- Complex reasoning problems beyond your capabilities
-- Tasks requiring specialized domain knowledge
-- Problems that need deeper analysis or longer context windows
-- Situations where a fresh perspective from a more capable model would help
+| Situation | Action |
+|-----------|--------|
+| Complex reasoning beyond your capabilities | `ask_big_bro` |
+| Specialized domain knowledge needed | `ask_big_bro` |
+| Need deeper analysis or longer context | `ask_big_bro` |
+| Entire task is too big to handle | `escalate_task` |
+| Want a fresh perspective from a stronger model | Either |
+
+## The Point
+
+Most people give up when they hit a wall.
+
+Big Bro MCP removes the wall.
+
+You don't have to be the smartest person in the room. You just need to know when to ask for help.
+
+---
 
 ## License
 
